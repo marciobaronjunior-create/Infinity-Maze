@@ -10,7 +10,8 @@ export default function Home() {
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [showLanguageSelect, setShowLanguageSelect] = useState(!player.language);
 
-  const t = translations[player.language || 'pt'];
+  const lang = player.language || 'pt';
+  const t = translations[lang];
 
   useEffect(() => {
     // Initial Login Check - Reset 24h after rescue
@@ -69,21 +70,16 @@ export default function Home() {
     const newUntil = Math.min(currentUntil + (5 * 60 * 1000), maxUntil);
 
     if (newUntil === currentUntil && currentUntil >= maxUntil) {
-      alert(player.language === 'en' ? "You reached the 15 min limit!" : "Você já atingiu o tempo máximo de 15 minutos!");
+      alert(t.maxTimeReached);
       return;
     }
 
-    const adMsg = player.language === 'en' 
-      ? "Watch a short ad to earn 5 minutes of DOUBLE REWARD?" 
-      : "Assista a um breve anúncio para ganhar 5 minutos de RECOMPENSA EM DOBRO!";
-
-    const confirmAd = window.confirm(adMsg);
+    const confirmAd = window.confirm(t.watchAdConfirmation);
     if (confirmAd) {
       setTimeout(() => {
         const updated = updatePlayerData({ doubleRewardUntil: newUntil });
         setPlayer(updated);
-        const successMsg = player.language === 'en' ? "Double reward activated!" : "Recompensa em dobro ativada!";
-        alert(successMsg);
+        alert(t.doubleRewardActivated);
       }, 500);
     }
   };
@@ -111,8 +107,8 @@ export default function Home() {
               className="text-center mb-12"
             >
               <Globe size={64} className="text-[#00C896] mx-auto mb-4" />
-              <h2 className="text-2xl font-black uppercase tracking-widest text-white">Select Language</h2>
-              <p className="text-[#7A9BBF] font-bold">Selecione seu Idioma</p>
+              <h2 className="text-2xl font-black uppercase tracking-widest text-white">{lang === 'en' ? 'Select Language' : 'Selecione seu Idioma'}</h2>
+              <p className="text-[#7A9BBF] font-bold">{lang === 'en' ? 'Choose your preferred language' : 'Selecione seu idioma preferido'}</p>
             </motion.div>
 
             <div className="grid grid-cols-1 gap-4 w-full max-w-xs">
@@ -151,7 +147,7 @@ export default function Home() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-                <h2 className="font-bold text-sm text-[#7A9BBF]">{player.nickname}</h2>
+                <h2 className="font-bold text-sm text-[#7A9BBF]">{player.nickname === 'Explorador' ? t.explorer : player.nickname}</h2>
             </div>
             <div className="flex items-center gap-2">
               <p className="text-[10px] text-[#415A77]">{t.level} {player.level}</p>
@@ -214,10 +210,10 @@ export default function Home() {
                     </div>
                     <div className="text-left">
                         <h3 className={`font-bold text-sm ${timeLeft > 0 ? 'text-[#00C896]' : 'text-white'}`}>
-                            {timeLeft > 0 ? (player.language === 'en' ? 'Double Reward Active!' : 'Recompensa em Dobro Ativa!') : (player.language === 'en' ? 'Double Reward' : 'Recompensa em Dobro')}
+                            {timeLeft > 0 ? t.doubleRewardActive : t.doubleReward}
                         </h3>
                         <p className="text-[10px] text-[#7A9BBF] font-bold uppercase tracking-wider">
-                            {timeLeft > 0 ? (player.language === 'en' ? `Left ${formatTime(timeLeft)}` : `Restam ${formatTime(timeLeft)}`) : (player.language === 'en' ? 'Watch ad +5 min' : 'Assista anúncio +5 min')}
+                            {timeLeft > 0 ? t.timeLeft.replace('{time}', formatTime(timeLeft)) : t.watchAd}
                         </p>
                     </div>
                 </div>
@@ -244,7 +240,7 @@ export default function Home() {
           >
             <div className="text-left">
               <h3 className="font-bold text-lg">{t.difficulty.easy}</h3>
-              <p className="text-[10px] text-[#7A9BBF] uppercase tracking-wider">{player.language === 'en' ? '15x15 Maze' : 'Labirinto 15x15'}</p>
+              <p className="text-[10px] text-[#7A9BBF] uppercase tracking-wider">{t.mazeSize.replace('{size}', '15x15')}</p>
             </div>
             <div className="w-10 h-10 rounded-2xl bg-[#0D1B2A] flex items-center justify-center group-hover:bg-[#00C896] group-hover:text-[#0D1B2A] transition-all">
               <Play size={18} fill="currentColor" />
@@ -260,7 +256,7 @@ export default function Home() {
           >
             <div className="text-left">
               <h3 className="font-bold text-lg">{t.difficulty.medium}</h3>
-              <p className="text-[10px] text-[#7A9BBF] uppercase tracking-wider">{player.language === 'en' ? '25x25 Maze' : 'Labirinto 25x25'}</p>
+              <p className="text-[10px] text-[#7A9BBF] uppercase tracking-wider">{t.mazeSize.replace('{size}', '25x25')}</p>
             </div>
             <div className="w-10 h-10 rounded-2xl bg-[#0D1B2A] flex items-center justify-center group-hover:bg-[#00C896] group-hover:text-[#0D1B2A] transition-all">
               <Play size={18} fill="currentColor" />

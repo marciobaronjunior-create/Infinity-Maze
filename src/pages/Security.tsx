@@ -2,50 +2,51 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShieldCheck, Lock, EyeOff, Bell, ChevronRight } from 'lucide-react';
 import { motion } from 'motion/react';
+import { getPlayerData, translations } from '@/lib/playerUtils';
 
 export default function Security() {
   const navigate = useNavigate();
-  const [privacy, setPrivacy] = React.useState('Público');
+  const player = getPlayerData();
+  const lang = player.language || 'pt';
+  const t = translations[lang];
+
+  const [privacy, setPrivacy] = React.useState(t.public);
   const [anonymous, setAnonymous] = React.useState(false);
   const [notifications, setNotifications] = React.useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
 
   const toggleSettings = (title: string) => {
-    switch (title) {
-      case 'Privacidade da Conta':
-        setPrivacy(prev => prev === 'Público' ? 'Privado' : 'Público');
-        break;
-      case 'Modo Anônimo':
+    if (title === t.securityItems.privacy.title) {
+        setPrivacy(prev => prev === t.public ? t.privateStatus : t.public);
+    } else if (title === t.securityItems.anonymous.title) {
         setAnonymous(prev => !prev);
-        break;
-      case 'Alertas de Acesso':
+    } else if (title === t.securityItems.notifications.title) {
         setNotifications(prev => !prev);
-        break;
     }
   };
 
   const securityItems = [
     {
       icon: <Lock size={20} className="text-[#00C896]" />,
-      title: 'Privacidade da Conta',
-      description: 'Gerencie quem pode ver seu perfil e estatísticas.',
+      title: t.securityItems.privacy.title,
+      description: t.securityItems.privacy.desc,
       status: privacy
     },
     {
       icon: <EyeOff size={20} className="text-amber-500" />,
-      title: 'Modo Anônimo',
-      description: 'Esconda seu nickname no ranking global.',
-      status: anonymous ? 'Ativado' : 'Desativado'
+      title: t.securityItems.anonymous.title,
+      description: t.securityItems.anonymous.desc,
+      status: anonymous ? t.activated : t.deactivated
     },
     {
       icon: <Bell size={20} className="text-purple-500" />,
-      title: 'Alertas de Acesso',
-      description: 'Receba notificações de novos logins.',
-      status: notifications ? 'Ativado' : 'Desativado'
+      title: t.securityItems.notifications.title,
+      description: t.securityItems.notifications.desc,
+      status: notifications ? t.activated : t.deactivated
     }
   ];
 
-  const isAllProtected = privacy === 'Privado' && anonymous && notifications;
+  const isAllProtected = privacy === t.privateStatus && anonymous && notifications;
 
   return (
     <div className="h-screen flex flex-col relative" style={{ background: '#0D1B2A', color: '#E0E1DD' }}>
@@ -60,9 +61,9 @@ export default function Security() {
             <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
               <ShieldCheck size={32} className="text-red-500" />
             </div>
-            <h3 className="text-xl font-black italic mb-2 text-red-500">TEM CERTEZA?</h3>
+            <h3 className="text-xl font-black italic mb-2 text-red-500">{t.deleteModal.title}</h3>
             <p className="text-xs text-[#7A9BBF] mb-8 leading-relaxed">
-              Esta ação é irreversível. Todo o seu progresso, nível e conquistas serão apagados permanentemente.
+              {t.deleteModal.description}
             </p>
             <div className="flex flex-col gap-3">
               <button 
@@ -73,13 +74,13 @@ export default function Security() {
                 }}
                 className="w-full py-4 bg-red-500 text-white font-black text-xs uppercase tracking-[0.2em] rounded-2xl shadow-lg active:scale-95 transition-transform"
               >
-                Sim, Excluir Tudo
+                {t.deleteModal.confirm}
               </button>
               <button 
                 onClick={() => setShowDeleteConfirm(false)}
                 className="w-full py-4 bg-[#162032] text-[#7A9BBF] font-black text-xs uppercase tracking-[0.2em] rounded-2xl active:scale-95 transition-transform"
               >
-                Cancelar
+                {t.deleteModal.cancel}
               </button>
             </div>
           </motion.div>
@@ -91,7 +92,7 @@ export default function Security() {
         <button onClick={() => navigate('/profile')} className="p-1" style={{ color: '#7A9BBF' }}>
           <ArrowLeft size={24} />
         </button>
-        <h1 className="flex-1 text-center font-bold text-lg">Segurança</h1>
+        <h1 className="flex-1 text-center font-bold text-lg">{t.security}</h1>
         <div className="w-8" />
       </div>
 
@@ -103,14 +104,14 @@ export default function Security() {
             <ShieldCheck size={32} className={isAllProtected ? 'text-[#00C896]' : 'text-amber-500'} />
           </div>
           <h2 className={`text-xl font-black italic mb-1 ${isAllProtected ? 'text-[#00C896]' : 'text-amber-500'}`}>
-            {isAllProtected ? 'Status: Protegido' : 'Status: Atenção'}
+            {isAllProtected ? t.securityStatus.protected : t.securityStatus.attention}
           </h2>
           <p className="text-xs text-[#7A9BBF]">
-            {isAllProtected ? 'Sua conta está com proteção máxima.' : 'Ative todas as opções para proteção total.'}
+            {isAllProtected ? t.securityStatus.protectedDesc : t.securityStatus.attentionDesc}
           </p>
         </div>
 
-        <h3 className="text-xs font-bold text-[#415A77] uppercase tracking-wider mb-4 px-2">Configurações de Segurança</h3>
+        <h3 className="text-xs font-bold text-[#415A77] uppercase tracking-wider mb-4 px-2">{lang === 'en' ? 'Security Settings' : 'Configurações de Segurança'}</h3>
         
         <div className="space-y-3">
           {securityItems.map((item, index) => (
@@ -131,7 +132,7 @@ export default function Security() {
               </div>
               <div className="text-right">
                 <span className={`text-[9px] font-black uppercase px-2 py-1 rounded-md ${
-                  item.status === 'Ativado' || item.status === 'Ativo' ? 'text-[#00C896] bg-[#00C896]/10' : 'text-[#415A77] bg-[#0D1B2A]'
+                  item.status === t.activated || item.status === t.active || item.status === t.public || item.status === t.privateStatus || item.status === 'Ativado' || item.status === 'Ativo' ? 'text-[#00C896] bg-[#00C896]/10' : 'text-[#415A77] bg-[#0D1B2A]'
                 }`}>
                   {item.status}
                 </span>
@@ -145,7 +146,7 @@ export default function Security() {
               onClick={() => setShowDeleteConfirm(true)}
               className="w-full text-red-400 text-xs font-black uppercase tracking-widest py-2 hover:bg-red-500/10 transition-colors rounded-xl"
             >
-                Excluir Conta Permanentemente
+                {t.deleteAccount}
             </button>
         </div>
       </div>

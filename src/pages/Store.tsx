@@ -13,21 +13,21 @@ interface Skin {
   minLevel?: number;
 }
 
-const SKINS: Skin[] = [
-  { id: '0', emoji: '🏈', name: 'Bowl Master', price: 0, minLevel: 3 },
-  { id: '1', emoji: '👻', name: 'Fantasmão', price: 100, minLevel: 2 },
-  { id: '5', emoji: '🧟', name: 'Zumbi', price: 100 },
-  { id: '3', emoji: '🦸', name: 'Herói', price: 200 },
-  { id: '4', emoji: '🧛', name: 'Vampiro', price: 0, priceBRL: 'R$ 2,99' },
-  { id: '7', emoji: '🧜‍♀️', name: 'Sereia', price: 350 },
-  { id: '8', emoji: '8', name: 'Unicórnio', price: 0, priceBRL: 'R$ 2,99' },
-  { id: '9', emoji: '🐉', name: 'Dragão Imperial', price: 1000 },
-  { id: '10', emoji: '🌌', name: 'Cosmos', price: 2000 },
+const SKINS_BASE: Omit<Skin, 'name'>[] = [
+  { id: '0', emoji: '🏈', price: 0, minLevel: 3, nameKey: 'bowlMaster' },
+  { id: '1', emoji: '👻', price: 100, minLevel: 2, nameKey: 'fantasmao' },
+  { id: '5', emoji: '🧟', price: 100, nameKey: 'zumbi' },
+  { id: '3', emoji: '🦸', price: 200, nameKey: 'heroi' },
+  { id: '4', emoji: '🧛', price: 0, priceBRL: 'R$ 2,99', nameKey: 'vampiro' },
+  { id: '7', emoji: '🧜‍♀️', price: 350, nameKey: 'sereia' },
+  { id: '8', emoji: '8', price: 0, priceBRL: 'R$ 2,99', nameKey: 'unicornio' },
+  { id: '9', emoji: '🐉', price: 1000, nameKey: 'dragao' },
+  { id: '10', emoji: '🌌', price: 2000, nameKey: 'cosmos' },
 ].sort((a, b) => {
   if (a.priceBRL && !b.priceBRL) return -1;
   if (!a.priceBRL && b.priceBRL) return 1;
   return a.price - b.price;
-});
+}) as any;
 
 export default function Store() {
   const navigate = useNavigate();
@@ -37,13 +37,14 @@ export default function Store() {
   const lang = player.language || 'pt';
   const t = translations[lang];
 
-  const buySkin = (skin: Skin) => {
+  const buySkin = (skin: any) => {
     if (skin.minLevel && player.level < skin.minLevel) return;
     if (!skin.priceBRL && player.coins < skin.price) return;
     if (player.unlockedSkins.includes(skin.emoji)) return;
 
     if (skin.priceBRL) {
-      const confirmPay = window.confirm(lang === 'en' ? `Simulate payment of ${skin.priceBRL} for skin ${skin.name}?` : `Deseja simular o pagamento de ${skin.priceBRL} para a skin ${skin.name}?`);
+      const skinName = (t.skinsData as any)[skin.nameKey];
+      const confirmPay = window.confirm(t.simulatePayment.replace('{price}', skin.priceBRL).replace('{item}', skinName));
       if (!confirmPay) return;
     }
 
@@ -77,11 +78,12 @@ export default function Store() {
 
       <div className="flex-1 overflow-y-auto p-6 scrollbar-hide">
         <div className="grid grid-cols-2 gap-4">
-          {SKINS.map((skin, index) => {
+          {(SKINS_BASE as any[]).map((skin, index) => {
             const isUnlocked = player.unlockedSkins.includes(skin.emoji);
             const canAfford = skin.priceBRL ? true : player.coins >= skin.price;
             const isLevelLocked = skin.minLevel ? player.level < skin.minLevel : false;
             const isEquipped = player.mazeSkin === skin.emoji;
+            const skinName = (t.skinsData as any)[skin.nameKey];
 
             return (
               <motion.div
@@ -95,7 +97,7 @@ export default function Store() {
               >
                 <div className="text-4xl mb-3 h-16 w-16 flex items-center justify-center bg-[#0D1B2A] rounded-2xl shadow-inner relative overflow-hidden">
                   {skin.emoji.startsWith('/') ? (
-                    <img src={skin.emoji} alt={skin.name} className="w-[80%] h-[80%] object-contain" referrerPolicy="no-referrer" />
+                    <img src={skin.emoji} alt={skinName} className="w-[80%] h-[80%] object-contain" referrerPolicy="no-referrer" />
                   ) : (
                     skin.emoji
                   )}
@@ -110,7 +112,7 @@ export default function Store() {
                     </div>
                   )}
                 </div>
-                <h3 className="text-[10px] font-bold text-[#7A9BBF] uppercase tracking-wider mb-1">{skin.name}</h3>
+                <h3 className="text-[10px] font-bold text-[#7A9BBF] uppercase tracking-wider mb-1">{skinName}</h3>
                 
                 {isUnlocked ? (
                   <button 
@@ -165,7 +167,7 @@ export default function Store() {
 
         {/* Special Services */}
         <div className="mt-10 space-y-4">
-          <h2 className="text-xs font-bold text-[#415A77] uppercase tracking-[0.2em] mb-4 border-l-2 border-[#00C896] pl-3">{lang === 'en' ? 'Special Services' : 'Serviços Especiais'}</h2>
+          <h2 className="text-xs font-bold text-[#415A77] uppercase tracking-[0.2em] mb-4 border-l-2 border-[#00C896] pl-3">{t.specialServices}</h2>
           
           <div className="bg-[#1B263B] border border-[#2A4A6B]/30 rounded-3xl p-6 flex items-center justify-between shadow-xl">
             <div className="flex items-center gap-4">
@@ -173,22 +175,20 @@ export default function Store() {
                 <Pencil size={28} />
               </div>
               <div>
-                <h3 className="font-bold text-white tracking-tight">{lang === 'en' ? 'Change Nickname' : 'Mudar de apelido'}</h3>
-                <p className="text-[10px] text-[#7A9BBF] uppercase font-bold mt-0.5">{lang === 'en' ? 'Reset change limit' : 'Resetar limite de alteração'}</p>
+                <h3 className="font-bold text-white tracking-tight">{t.changeNickname}</h3>
+                <p className="text-[10px] text-[#7A9BBF] uppercase font-bold mt-0.5">{t.resetLimit}</p>
               </div>
             </div>
             <button
               onClick={() => {
-                const payMsg = lang === 'en' ? `Simulate payment of R$ 5,99 to reset limit?` : `Deseja simular o pagamento de R$ 5,99 para resetar o limite de alteração de apelido?`;
-                const confirmPay = window.confirm(payMsg);
+                const confirmPay = window.confirm(t.simulatePayment.replace('{price}', 'R$ 5,99').replace('{item}', t.changeNickname.toLowerCase()));
                 if (confirmPay) {
                   setBuyingId('nickname_reset');
                   setTimeout(() => {
                     const updated = updatePlayerData({ nicknameChanged: false });
                     setPlayer(updated);
                     setBuyingId(null);
-                    const successMsg = lang === 'en' ? 'Limit reset! Go to profile to change.' : 'Limite resetado com sucesso! Vá ao seu perfil para alterar seu apelido.';
-                    alert(successMsg);
+                    alert(t.resetSuccess);
                   }, 800);
                 }
               }}

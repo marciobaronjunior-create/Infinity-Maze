@@ -15,7 +15,7 @@ export default function Profile() {
 
   const handleSave = () => {
     if (player.nicknameChanged) {
-        alert(lang === 'en' ? 'You already changed your nickname once!' : 'Você já alterou seu apelido uma vez!');
+        alert(t.changeNicknameError);
         setIsEditing(false);
         return;
     }
@@ -93,14 +93,14 @@ export default function Profile() {
             ) : (
               <div className="flex flex-col items-center">
                 <h2 className="text-2xl font-black italic tracking-tight flex items-center gap-2">
-                  {player.nickname}
+                  {player.nickname === 'Explorador' ? t.explorer : player.nickname}
                   {!player.nicknameChanged && (
                     <button onClick={() => setIsEditing(true)} className="p-1 text-[#415A77] hover:text-[#00C896] transition-colors">
                       <Pencil size={16} />
                     </button>
                   )}
                 </h2>
-                <p className="text-[#00C896] text-[10px] font-bold uppercase tracking-[0.3em] mt-1">{lang === 'en' ? 'Explorer Level' : 'Explorador Nível'} {player.level}</p>
+                <p className="text-[#00C896] text-[10px] font-bold uppercase tracking-[0.3em] mt-1">{t.explorerLevel} {player.level}</p>
               </div>
             )}
           </div>
@@ -115,7 +115,7 @@ export default function Profile() {
                 <Shield size={20} className="text-[#7A9BBF]" />
                 <div>
                     <p className="text-[10px] text-[#415A77] font-bold uppercase">{t.missions}</p>
-                    <p className="font-bold">{lang === 'en' ? '4 Active' : '4 Ativas'}</p>
+                    <p className="font-bold">{t.activeMissions.replace('{count}', '4')}</p>
                 </div>
             </button>
             <button 

@@ -68,7 +68,7 @@ export default function Game() {
     // Save to global ranking DB (just the entry, rewards handled on collect)
     const pData = getPlayerData();
     base44.entities.RankingEntry.create({
-      nickname: pData.nickname || 'Anônimo',
+      nickname: pData.nickname === 'Explorador' ? t.explorer : (pData.nickname || (playerData.language === 'en' ? 'Anonymous' : 'Anônimo')),
       avatar: pData.avatar || '🧑',
       customAvatar: pData.customAvatar,
       time: elapsed,
@@ -173,7 +173,7 @@ export default function Game() {
         {maze ? (
           <MazeGrid maze={maze} player={player} cellSize={cellSize} skin={playerData.mazeSkin} />
         ) : (
-          <div className="animate-pulse" style={{ color: '#7A9BBF' }}>{playerData.language === 'en' ? 'Generating maze...' : 'Gerando labirinto...'}</div>
+          <div className="animate-pulse" style={{ color: '#7A9BBF' }}>{t.generatingMaze}</div>
         )}
       </div>
 
@@ -204,7 +204,7 @@ export default function Game() {
             </div>
             <h2 className="text-3xl font-black text-white mb-2 uppercase tracking-tighter">{t.victory}</h2>
             <p className="text-[#7A9BBF] mb-6">
-              {playerData.language === 'en' ? 'You completed the maze in ' : 'Você completou o labirinto em '}
+              {t.victoryMessage}
               <span className="text-[#00C896] font-bold">{formatTime(elapsed)}</span>
             </p>
 

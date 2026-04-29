@@ -8,7 +8,8 @@ interface Mission {
   id: string;
   title: string;
   description: string;
-  reward: string;
+  reward?: string;
+  rewardKey?: string;
   progress: number;
   total: number;
   type: 'daily' | 'weekly' | 'special' | 'unique';
@@ -21,7 +22,7 @@ const MISSIONS_BASE: Omit<Mission, 'progress'>[] = [
     id: 'DAILY_LOGIN',
     title: 'dailyLogin',
     description: 'Login daily to earn rewards.',
-    reward: '+50 XP e 20 Moedas 💰',
+    rewardKey: 'dailyLoginReward',
     total: 1,
     type: 'daily'
   },
@@ -29,7 +30,7 @@ const MISSIONS_BASE: Omit<Mission, 'progress'>[] = [
     id: '1',
     title: 'Explorador Matinal',
     description: 'Complete 5 labirintos.',
-    reward: '+50 XP e 15 Moedas 💰',
+    rewardKey: 'explorerReward',
     total: 5,
     type: 'daily'
   },
@@ -37,7 +38,7 @@ const MISSIONS_BASE: Omit<Mission, 'progress'>[] = [
     id: '2',
     title: 'Mestre do Tempo',
     description: 'Termine um labirinto médio em menos de 2 minutos.',
-    reward: '+150 XP e 15 Moedas 💰',
+    rewardKey: 'timeMasterReward',
     total: 1,
     type: 'daily'
   },
@@ -45,7 +46,7 @@ const MISSIONS_BASE: Omit<Mission, 'progress'>[] = [
     id: '3',
     title: 'Persistência Blindada',
     description: 'Jogue por 7 dias consecutivos.',
-    reward: 'Skin Alien 👽',
+    rewardKey: 'alienSkinReward',
     total: 7,
     type: 'unique',
     rewardType: 'skin',
@@ -55,7 +56,7 @@ const MISSIONS_BASE: Omit<Mission, 'progress'>[] = [
     id: '7',
     title: 'Mestre do Labirinto',
     description: 'Complete 100 labirintos no total.',
-    reward: '+500 XP e 50 Moedas 💰',
+    rewardKey: 'mazeMasterReward',
     total: 100,
     type: 'unique'
   },
@@ -63,7 +64,7 @@ const MISSIONS_BASE: Omit<Mission, 'progress'>[] = [
     id: '8',
     title: 'Apoiador do Jogo',
     description: 'Assista 50 anúncios para ajudar o projeto.',
-    reward: '+500 XP e 50 Moedas 💰',
+    rewardKey: 'supporterReward',
     total: 50,
     type: 'unique'
   },
@@ -71,7 +72,7 @@ const MISSIONS_BASE: Omit<Mission, 'progress'>[] = [
     id: '9',
     title: 'Grande apoiador',
     description: 'Torne-se um apoiador lendário assistindo 100 anúncios.',
-    reward: 'Skin Rei 👑',
+    rewardKey: 'kingSkinReward',
     total: 100,
     type: 'unique',
     rewardType: 'skin',
@@ -81,7 +82,7 @@ const MISSIONS_BASE: Omit<Mission, 'progress'>[] = [
     id: '5',
     title: 'Colecionador de Estrelas',
     description: 'Colete 50 estrelas nos labirintos.',
-    reward: '100 Moedas',
+    rewardKey: 'starCollectorReward',
     total: 50,
     type: 'weekly'
   },
@@ -89,7 +90,7 @@ const MISSIONS_BASE: Omit<Mission, 'progress'>[] = [
     id: '6',
     title: 'Maratona do Labirinto',
     description: 'Complete 30 labirintos no total esta semana.',
-    reward: '+500 XP e 50 Moedas 💰',
+    rewardKey: 'mazeMasterReward',
     total: 30,
     type: 'weekly'
   },
@@ -97,7 +98,7 @@ const MISSIONS_BASE: Omit<Mission, 'progress'>[] = [
     id: '4',
     title: 'Velocidade da Luz',
     description: 'Complete 10 labirintos hoje.',
-    reward: '+300 XP e 15 Moedas 💰',
+    rewardKey: 'lightSpeedReward',
     total: 10,
     type: 'special'
   }
@@ -105,28 +106,28 @@ const MISSIONS_BASE: Omit<Mission, 'progress'>[] = [
 
 const missionTranslations = {
   pt: {
-    'DAILY_LOGIN': { title: 'Login Diário', desc: 'Entre no jogo hoje.' },
-    '1': { title: 'Explorador Matinal', desc: 'Complete 5 labirintos.' },
-    '2': { title: 'Mestre do Tempo', desc: 'Termine um labirinto médio em menos de 2 minutos.' },
-    '3': { title: 'Persistência Blindada', desc: 'Jogue por 7 dias consecutivos.' },
-    '7': { title: 'Mestre do Labirinto', desc: 'Complete 100 labirintos no total.' },
-    '8': { title: 'Apoiador do Jogo', desc: 'Assista 50 anúncios para ajudar o projeto.' },
-    '9': { title: 'Grande apoiador', desc: 'Torne-se um apoiador lendário assistindo 100 anúncios.' },
-    '5': { title: 'Colecionador de Estrelas', desc: 'Colete 50 estrelas nos labirintos.' },
-    '6': { title: 'Maratona do Labirinto', desc: 'Complete 30 labirintos no total esta semana.' },
-    '4': { title: 'Velocidade da Luz', desc: 'Complete 10 labirintos hoje.' }
+    'DAILY_LOGIN': { title: 'Login Diário', desc: 'Entre no jogo hoje.', reward: '+50 XP e 20 Moedas 💰' },
+    '1': { title: 'Explorador Matinal', desc: 'Complete 5 labirintos.', reward: '+50 XP e 15 Moedas 💰' },
+    '2': { title: 'Mestre do Tempo', desc: 'Termine um labirinto médio em menos de 2 minutos.', reward: '+150 XP e 15 Moedas 💰' },
+    '3': { title: 'Persistência Blindada', desc: 'Jogue por 7 dias consecutivos.', reward: 'Skin Alien 👽' },
+    '7': { title: 'Mestre do Labirinto', desc: 'Complete 100 labirintos no total.', reward: '+500 XP e 50 Moedas 💰' },
+    '8': { title: 'Apoiador do Jogo', desc: 'Assista 50 anúncios para ajudar o projeto.', reward: '+500 XP e 50 Moedas 💰' },
+    '9': { title: 'Grande apoiador', desc: 'Torne-se um apoiador lendário assistindo 100 anúncios.', reward: 'Skin Rei 👑' },
+    '5': { title: 'Colecionador de Estrelas', desc: 'Colete 50 estrelas nos labirintos.', reward: '100 Moedas' },
+    '6': { title: 'Maratona do Labirinto', desc: 'Complete 30 labirintos no total esta semana.', reward: '+500 XP e 50 Moedas 💰' },
+    '4': { title: 'Velocidade da Luz', desc: 'Complete 10 labirintos hoje.', reward: '+300 XP e 15 Moedas 💰' }
   },
   en: {
-    'DAILY_LOGIN': { title: 'Daily Login', desc: 'Enter the game today.' },
-    '1': { title: 'Morning Explorer', desc: 'Complete 5 mazes.' },
-    '2': { title: 'Time Master', desc: 'Finish a medium maze in under 2 minutes.' },
-    '3': { title: 'Steady Persistence', desc: 'Play for 7 consecutive days.' },
-    '7': { title: 'Maze Master', desc: 'Complete 100 mazes in total.' },
-    '8': { title: 'Game Supporter', desc: 'Watch 50 ads to help the project.' },
-    '9': { title: 'Grand Supporter', desc: 'Become a legendary supporter by watching 100 ads.' },
-    '5': { title: 'Star Collector', desc: 'Collect 50 stars in the mazes.' },
-    '6': { title: 'Maze Marathon', desc: 'Complete 30 mazes total this week.' },
-    '4': { title: 'Light Speed', desc: 'Complete 10 mazes today.' }
+    'DAILY_LOGIN': { title: 'Daily Login', desc: 'Enter the game today.', reward: '+50 XP and 20 Coins 💰' },
+    '1': { title: 'Morning Explorer', desc: 'Complete 5 mazes.', reward: '+50 XP and 15 Coins 💰' },
+    '2': { title: 'Time Master', desc: 'Finish a medium maze in under 2 minutes.', reward: '+150 XP and 15 Coins 💰' },
+    '3': { title: 'Steady Persistence', desc: 'Play for 7 consecutive days.', reward: 'Alien Skin 👽' },
+    '7': { title: 'Maze Master', desc: 'Complete 100 mazes in total.', reward: '+500 XP and 50 Coins 💰' },
+    '8': { title: 'Game Supporter', desc: 'Watch 50 ads to help the project.', reward: '+500 XP and 50 Coins 💰' },
+    '9': { title: 'Grand Supporter', desc: 'Become a legendary supporter by watching 100 ads.', reward: 'King Skin 👑' },
+    '5': { title: 'Star Collector', desc: 'Collect 50 stars in the mazes.', reward: '100 Coins' },
+    '6': { title: 'Maze Marathon', desc: 'Complete 30 mazes total this week.', reward: '+500 XP and 50 Coins 💰' },
+    '4': { title: 'Light Speed', desc: 'Complete 10 mazes today.', reward: '+300 XP and 15 Coins 💰' }
   }
 };
 
@@ -145,12 +146,16 @@ export default function Missions() {
   const t = translations[lang];
   const mt = missionTranslations[lang];
 
-  const missions: Mission[] = MISSIONS_BASE.map(m => ({
-    ...m,
-    title: mt[m.id as keyof typeof mt]?.title || m.title,
-    description: mt[m.id as keyof typeof mt]?.desc || m.description,
-    progress: player.missionProgress[m.id] || 0
-  }));
+  const missions: Mission[] = MISSIONS_BASE.map(m => {
+    const translation = mt[m.id as keyof typeof mt];
+    return {
+      ...m,
+      title: translation?.title || m.id,
+      description: translation?.desc || '',
+      reward: translation?.reward || '',
+      progress: player.missionProgress[m.id] || 0
+    };
+  });
 
   const filteredMissions = missions.filter(m => {
     if (activeTab === 'daily') return m.type === 'daily' || m.type === 'special';
