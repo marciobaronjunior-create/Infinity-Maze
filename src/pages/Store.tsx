@@ -37,6 +37,14 @@ export default function Store() {
   const lang = player.language || 'pt';
   const t = translations[lang];
 
+  const formatPrice = (price: string | undefined) => {
+    if (!price) return price;
+    if (lang === 'en') {
+      return price.replace('R$', 'USD $');
+    }
+    return price;
+  };
+
   const buySkin = (skin: any) => {
     if (skin.minLevel && player.level < skin.minLevel) return;
     if (!skin.priceBRL && player.coins < skin.price) return;
@@ -44,7 +52,8 @@ export default function Store() {
 
     if (skin.priceBRL) {
       const skinName = (t.skinsData as any)[skin.nameKey];
-      const confirmPay = window.confirm(t.simulatePayment.replace('{price}', skin.priceBRL).replace('{item}', skinName));
+      const displayPrice = formatPrice(skin.priceBRL);
+      const confirmPay = window.confirm(t.simulatePayment.replace('{price}', displayPrice!).replace('{item}', skinName));
       if (!confirmPay) return;
     }
 
@@ -150,7 +159,7 @@ export default function Store() {
                     ) : isLevelLocked ? (
                       t.profile.locked
                     ) : skin.priceBRL ? (
-                      skin.priceBRL
+                      formatPrice(skin.priceBRL)
                     ) : skin.price === 0 ? (
                       t.claim
                     ) : (
@@ -181,7 +190,8 @@ export default function Store() {
             </div>
             <button
               onClick={() => {
-                const confirmPay = window.confirm(t.simulatePayment.replace('{price}', 'R$ 5,99').replace('{item}', t.changeNickname.toLowerCase()));
+                const servicePrice = 'R$ 5,99';
+                const confirmPay = window.confirm(t.simulatePayment.replace('{price}', formatPrice(servicePrice)!).replace('{item}', t.changeNickname.toLowerCase()));
                 if (confirmPay) {
                   setBuyingId('nickname_reset');
                   setTimeout(() => {
@@ -199,7 +209,7 @@ export default function Store() {
                 <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}>
                   <ShoppingBag size={14} />
                 </motion.div>
-              ) : 'R$ 5,99'}
+              ) : formatPrice('R$ 5,99')}
             </button>
           </div>
         </div>

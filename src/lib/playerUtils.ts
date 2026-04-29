@@ -183,7 +183,7 @@ export const translations = {
     ranking: 'Ranking',
     explorerLevel: 'Explorer Level',
     changeNicknameError: 'You already changed your nickname once!',
-    confirmNicknameReset: 'Simulate payment of R$ 5,99 to reset nickname change limit?',
+    confirmNicknameReset: 'Simulate payment of USD $ 5,99 to reset nickname change limit?',
     doubleRewardActive: 'Double Reward Active!',
     timeLeft: 'Left {time}',
     watchAd: 'Watch ad +5 min',
