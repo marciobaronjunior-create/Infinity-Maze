@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useMaze } from '@/hooks/useMaze';
 import MazeGrid from '@/components/maze/MazeGrid';
 import DPad from '@/components/maze/DPad';
-import { ArrowLeft, Zap } from 'lucide-react';
+import { ArrowLeft, Zap, Star } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { getPlayerData, updatePlayerData, translations } from '@/lib/playerUtils';
 import { motion } from 'motion/react';
@@ -89,10 +89,11 @@ export default function Game() {
     }, 600);
   }, [won, difficulty, elapsed, stars]);
 
-  const baseCoins = difficulty === 'easy' ? 10 : 25;
-  const baseXp = difficulty === 'easy' ? 20 : 50;
+  const baseCoins = difficulty === 'easy' ? 5 : 12;
+  const baseXp = difficulty === 'easy' ? 10 : 25;
 
   const isGlobalDoubleActive = playerData.doubleRewardUntil ? playerData.doubleRewardUntil > Date.now() : false;
+  const isPremium = playerData.premiumUntil ? playerData.premiumUntil > Date.now() : false;
 
   // We'll recalculate stars for display in the overlay using a stable method or just show it based on probability logic
   const victoryStars = useMemo(() => {
@@ -105,9 +106,15 @@ export default function Game() {
 
   const collectReward = (multiplier: number = 1) => {
     const pData = getPlayerData();
-    const finalMultiplier = isGlobalDoubleActive ? multiplier * 2 : multiplier;
+    let finalMultiplier = isGlobalDoubleActive ? multiplier * 2 : multiplier;
 
-    const coinsReward = baseCoins * finalMultiplier;
+    let coinsReward = baseCoins * finalMultiplier;
+    
+    // Apply 20% premium bonus if active
+    if (isPremium) {
+      coinsReward = Math.floor(coinsReward * 1.2);
+    }
+    
     const xpReward = baseXp * finalMultiplier;
 
     const newXp = pData.xp + xpReward;
@@ -215,12 +222,13 @@ export default function Game() {
               >
                 <span>{t.nextLabyrinth}</span>
                 <span className="bg-[#0D1B2A]/10 px-2 py-0.5 rounded-lg text-[10px]">
-                  +{isGlobalDoubleActive ? baseCoins * 2 : baseCoins} 💰
+                  +{isPremium ? Math.floor((isGlobalDoubleActive ? baseCoins * 2 : baseCoins) * 1.2) : (isGlobalDoubleActive ? baseCoins * 2 : baseCoins)} 💰
                 </span>
-                {isGlobalDoubleActive && <Zap size={14} className="text-[#0D1B2A]" fill="currentColor" />}
+                {isPremium && <Star size={14} className="text-[#0D1B2A]" fill="currentColor" />}
+                {!isPremium && isGlobalDoubleActive && <Zap size={14} className="text-[#0D1B2A]" fill="currentColor" />}
               </button>
 
-              {!isGlobalDoubleActive && (
+              {!isGlobalDoubleActive && !isPremium && (
                 <button
                   onClick={() => collectReward(2)}
                   className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-black text-sm uppercase tracking-widest shadow-[0_4px_0_#4C1D95] active:shadow-none active:translate-y-[4px] transition-all flex items-center justify-center gap-2"

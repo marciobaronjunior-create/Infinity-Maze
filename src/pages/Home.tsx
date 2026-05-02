@@ -13,6 +13,8 @@ export default function Home() {
   const lang = player.language || 'pt';
   const t = translations[lang];
 
+  const isPremium = player.premiumUntil ? player.premiumUntil > Date.now() : false;
+
   useEffect(() => {
     // Initial Login Check - Reset 24h after rescue
     const now = Date.now();
@@ -71,6 +73,13 @@ export default function Home() {
 
     if (newUntil === currentUntil && currentUntil >= maxUntil) {
       alert(t.maxTimeReached);
+      return;
+    }
+
+    if (isPremium) {
+      const updated = updatePlayerData({ doubleRewardUntil: newUntil });
+      setPlayer(updated);
+      alert(t.doubleRewardActivated);
       return;
     }
 
@@ -199,35 +208,37 @@ export default function Home() {
         </motion.div>
 
         {/* Double Reward Button */}
-        <div className="w-full max-w-xs mb-2">
-            <button
-                onClick={handleDoubleReward}
-                className={`w-full group relative overflow-hidden p-4 rounded-3xl flex items-center justify-between transition-all active:scale-95 border-2 ${timeLeft > 0 ? 'bg-[#00C896]/10 border-[#00C896] shadow-[0_0_20px_rgba(0,200,150,0.2)]' : 'bg-[#1B263B] border-[#2A4A6B]/50'}`}
-            >
-                <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${timeLeft > 0 ? 'bg-[#00C896] text-[#0D1B2A]' : 'bg-[#0D1B2A] text-[#7A9BBF]'}`}>
-                        {timeLeft > 0 ? <Zap size={24} fill="currentColor" /> : <Tv size={24} />}
-                    </div>
-                    <div className="text-left">
-                        <h3 className={`font-bold text-sm ${timeLeft > 0 ? 'text-[#00C896]' : 'text-white'}`}>
-                            {timeLeft > 0 ? t.doubleRewardActive : t.doubleReward}
-                        </h3>
-                        <p className="text-[10px] text-[#7A9BBF] font-bold uppercase tracking-wider">
-                            {timeLeft > 0 ? t.timeLeft.replace('{time}', formatTime(timeLeft)) : t.watchAd}
-                        </p>
-                    </div>
-                </div>
-                {timeLeft > 0 && (
-                    <motion.div 
-                        animate={{ scale: [1, 1.2, 1] }}
-                        transition={{ repeat: Infinity, duration: 2 }}
-                        className="text-[#00C896] font-black italic text-xs mr-2"
-                    >
-                        2X
-                    </motion.div>
-                )}
-            </button>
-        </div>
+        {!isPremium && (
+          <div className="w-full max-w-xs mb-2">
+              <button
+                  onClick={handleDoubleReward}
+                  className={`w-full group relative overflow-hidden p-4 rounded-3xl flex items-center justify-between transition-all active:scale-95 border-2 ${timeLeft > 0 ? 'bg-[#00C896]/10 border-[#00C896] shadow-[0_0_20px_rgba(0,200,150,0.2)]' : 'bg-[#1B263B] border-[#2A4A6B]/50'}`}
+              >
+                  <div className="flex items-center gap-4">
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${timeLeft > 0 ? 'bg-[#00C896] text-[#0D1B2A]' : 'bg-[#0D1B2A] text-[#7A9BBF]'}`}>
+                          {timeLeft > 0 ? <Zap size={24} fill="currentColor" /> : <Tv size={24} />}
+                      </div>
+                      <div className="text-left">
+                          <h3 className={`font-bold text-sm ${timeLeft > 0 ? 'text-[#00C896]' : 'text-white'}`}>
+                              {timeLeft > 0 ? t.doubleRewardActive : t.doubleReward}
+                          </h3>
+                          <p className="text-[10px] text-[#7A9BBF] font-bold uppercase tracking-wider">
+                              {timeLeft > 0 ? t.timeLeft.replace('{time}', formatTime(timeLeft)) : t.watchAd}
+                          </p>
+                      </div>
+                  </div>
+                  {timeLeft > 0 && (
+                      <motion.div 
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ repeat: Infinity, duration: 2 }}
+                          className="text-[#00C896] font-black italic text-xs mr-2"
+                      >
+                          2X
+                      </motion.div>
+                  )}
+              </button>
+          </div>
+        )}
 
         {/* Level Select */}
         <div className="w-full max-w-xs flex flex-col gap-3">

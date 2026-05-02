@@ -62,25 +62,47 @@ export function useMaze(difficulty: string) {
     };
   }, [won, maze]);
 
+  useEffect(() => {
+    if (maze && player.x >= 0 && player.y >= 0 && maze[player.y][player.x] === 3) {
+      setWon(true);
+    }
+  }, [player, maze]);
+
   const move = useCallback((dir: Direction) => {
     if (won || !maze) return;
 
     setPlayer(prev => {
-      let nx = prev.x;
-      let ny = prev.y;
+      let currentX = prev.x;
+      let currentY = prev.y;
+      
+      let stepX = 0;
+      let stepY = 0;
+      if (dir === 'up') stepY = -1;
+      if (dir === 'down') stepY = 1;
+      if (dir === 'left') stepX = -1;
+      if (dir === 'right') stepX = 1;
 
-      if (dir === 'up') ny--;
-      if (dir === 'down') ny++;
-      if (dir === 'left') nx--;
-      if (dir === 'right') nx++;
+      while (true) {
+        const nextX = currentX + stepX;
+        const nextY = currentY + stepY;
 
-      if (ny >= 0 && ny < maze.length && nx >= 0 && nx < maze[0].length && maze[ny][nx] !== 1) {
-        if (maze[ny][nx] === 3) {
-          setWon(true);
+        if (
+          nextY >= 0 && nextY < maze.length && 
+          nextX >= 0 && nextX < maze[0].length && 
+          maze[nextY][nextX] !== 1
+        ) {
+          currentX = nextX;
+          currentY = nextY;
+          
+          if (maze[currentY][currentX] === 3) {
+            break;
+          }
+        } else {
+          break;
         }
-        return { x: nx, y: ny };
       }
-      return prev;
+
+      return { x: currentX, y: currentY };
     });
   }, [maze, won]);
 

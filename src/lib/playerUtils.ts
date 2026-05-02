@@ -14,6 +14,7 @@ export interface PlayerData {
   doubleRewardUntil?: number; // timestamp
   lastDailyLoginClaimedAt?: number; // timestamp
   language?: 'pt' | 'en';
+  premiumUntil?: number; // timestamp
 }
 
 export const translations = {
@@ -43,6 +44,9 @@ export const translations = {
     },
     specialServices: 'Serviços Especiais',
     changeNickname: 'Mudar de apelido',
+    removeAds: 'Premium (Sem Anúncios)',
+    removeAdsDesc: 'Sem anúncios +20% bônus de moedas por 30 dias',
+    premiumBonus: '+20% Bônus Premium',
     resetLimit: 'Resetar limite de alteração',
     resetSuccess: 'Limite resetado com sucesso! Vá ao seu perfil para alterar seu apelido.',
     simulatePayment: 'Deseja simular o pagamento de {price} para {item}?',
@@ -154,6 +158,9 @@ export const translations = {
     },
     specialServices: 'Special Services',
     changeNickname: 'Change Nickname',
+    removeAds: 'Premium (No Ads)',
+    removeAdsDesc: 'No ads +20% coin bonus for 30 days',
+    premiumBonus: '+20% Premium Bonus',
     resetLimit: 'Reset change limit',
     resetSuccess: 'Limit reset! Go to profile to change your nickname.',
     simulatePayment: 'Simulate payment of {price} for {item}?',
@@ -183,7 +190,7 @@ export const translations = {
     ranking: 'Ranking',
     explorerLevel: 'Explorer Level',
     changeNicknameError: 'You already changed your nickname once!',
-    confirmNicknameReset: 'Simulate payment of USD $ 5,99 to reset nickname change limit?',
+    confirmNicknameReset: 'Simulate payment of US $ 5,99 to reset nickname change limit?',
     doubleRewardActive: 'Double Reward Active!',
     timeLeft: 'Left {time}',
     watchAd: 'Watch ad +5 min',
@@ -265,7 +272,8 @@ export function getPlayerData(): PlayerData {
     },
     doubleRewardUntil: 0,
     lastDailyLoginClaimedAt: 0,
-    language: undefined
+    language: undefined,
+    premiumUntil: 0
   };
 
   const stored = localStorage.getItem('player_data');
