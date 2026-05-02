@@ -197,7 +197,18 @@ export default function Store() {
               setStoreError(null);
               try {
                 setBuyingId('checking_status');
-                const res = await fetch('/api/health');
+                const res = await fetch(`/api/health?t=${Date.now()}`, {
+                  headers: { 'Accept': 'application/json' }
+                });
+                if (!res.ok) {
+                  const errorText = await res.text();
+                  throw new Error(`Server returned ${res.status}: ${errorText.substring(0, 50)}...`);
+                }
+                const contentType = res.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                  const blob = await res.text();
+                  throw new Error(`Expected JSON but got ${contentType}. Content starts with: ${blob.substring(0, 30)}...`);
+                }
                 const data = await res.json();
                 setStripeStatus(data);
                 setBuyingId(null);

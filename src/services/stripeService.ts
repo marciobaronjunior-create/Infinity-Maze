@@ -15,6 +15,7 @@ export async function createCheckoutSession(items: CheckoutItem[], currency: str
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
       },
       body: JSON.stringify({ items, currency, origin }),
       signal: controller.signal
@@ -28,8 +29,14 @@ export async function createCheckoutSession(items: CheckoutItem[], currency: str
     try {
       data = JSON.parse(text);
     } catch (e) {
-      console.error('[StripeService] Failed to parse JSON response:', text);
-      throw new Error(`Invalid server response: ${text.substring(0, 50)}...`);
+      const isHtml = text.toLowerCase().includes('<!doctype') || text.toLowerCase().includes('<html');
+      console.error('[StripeService] Failed to parse JSON response. Content type:', response.headers.get('content-type'));
+      console.error('[StripeService] Response content:', text.substring(0, 500));
+      
+      if (isHtml) {
+        throw new Error('Server returned HTML instead of JSON. This usually means the API route was not found and the server fell back to the app page.');
+      }
+      throw new Error(`Invalid server response (not JSON): ${text.substring(0, 100)}...`);
     }
 
     if (!response.ok) {
