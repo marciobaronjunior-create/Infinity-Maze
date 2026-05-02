@@ -16,7 +16,11 @@ function getStripe(): Stripe {
     if (!key) {
       throw new Error("STRIPE_SECRET_KEY environment variable is required. Please set it in Settings > Environment Variables.");
     }
-    stripeClient = new Stripe(key);
+    stripeClient = new Stripe(key, {
+      apiVersion: "2023-10-16" as any, // Use target stable version
+      maxNetworkRetries: 2, // Habilita novas tentativas automáticas como sugerido na sua doc
+      timeout: 80000, // Tempo limite de leitura (80 segundos como na doc)
+    });
   }
   return stripeClient;
 }
