@@ -16,11 +16,11 @@ interface Skin {
 
 const SKINS_BASE: Omit<Skin, 'name'>[] = [
   { id: '0', emoji: '🏈', price: 0, minLevel: 3, nameKey: 'bowlMaster' },
-  { id: '1', emoji: '👻', price: 100, minLevel: 2, nameKey: 'fantasmao' },
-  { id: '5', emoji: '🧟', price: 100, nameKey: 'zumbi' },
-  { id: '3', emoji: '🦸', price: 200, nameKey: 'heroi' },
+  { id: '1', emoji: '👻', price: 500, minLevel: 2, nameKey: 'fantasmao' },
+  { id: '5', emoji: '🧟', price: 500, nameKey: 'zumbi' },
+  { id: '3', emoji: '🦸', price: 500, nameKey: 'heroi' },
   { id: '4', emoji: '🧛', price: 0, priceBRL: 'R$ 2,99', nameKey: 'vampiro' },
-  { id: '7', emoji: '🧜‍♀️', price: 350, nameKey: 'sereia' },
+  { id: '7', emoji: '🧜‍♀️', price: 500, nameKey: 'sereia' },
   { id: '8', emoji: '8', price: 0, priceBRL: 'R$ 2,99', nameKey: 'unicornio' },
   { id: '9', emoji: '🐉', price: 1000, nameKey: 'dragao' },
   { id: '10', emoji: '🌌', price: 2000, nameKey: 'cosmos' },

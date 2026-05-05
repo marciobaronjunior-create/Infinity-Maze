@@ -18,39 +18,56 @@ const achievementTranslations = {
     '1': { title: 'Primeiros Passos', desc: 'Complete seu primeiro labirinto.' },
     '2': { title: 'Flash', desc: 'Termine um labirinto em menos de 30 segundos.' },
     '3': { title: 'Inabalável', desc: 'Vença 10 vezes seguidas sem errar o caminho.' },
-    '4': { title: 'Lenda do Labirinto', desc: 'Alcance o nível 10.' }
+    '4': { title: 'Lenda do Labirinto', desc: 'Alcance o nível 10.' },
+    '5': { title: 'Novato', desc: 'Tenha pelo menos 1 skin.' },
+    '6': { title: 'Camuflado', desc: 'Tenha pelo menos 3 skins.' },
+    '7': { title: 'Mestre do desfarce', desc: 'Tenha todas as skins disponíveis.' }
   },
   en: {
     '1': { title: 'First Steps', desc: 'Complete your first maze.' },
     '2': { title: 'Flash', desc: 'Finish a maze in under 30 seconds.' },
     '3': { title: 'Unshakeable', desc: 'Win 10 times in a row without missing the path.' },
-    '4': { title: 'Maze Legend', desc: 'Reach level 10.' }
+    '4': { title: 'Maze Legend', desc: 'Reach level 10.' },
+    '5': { title: 'Novice', desc: 'Have at least 1 skin.' },
+    '6': { title: 'Camouflaged', desc: 'Have at least 3 skins.' },
+    '7': { title: 'Master of Disguise', desc: 'Have all available skins.' }
   }
 };
 
-const ACHIEVEMENTS_BASE: Omit<Achievement, 'titleKey' | 'descKey'>[] = [
+const ACHIEVEMENTS_BASE: Omit<Achievement, 'titleKey' | 'descKey' | 'unlocked'>[] = [
   {
     id: '1',
     icon: <Medal size={24} />,
-    unlocked: true,
     rarity: 'common'
   },
   {
     id: '2',
     icon: <Flame size={24} />,
-    unlocked: true,
     rarity: 'rare'
   },
   {
     id: '3',
     icon: <Lock size={24} />,
-    unlocked: false,
     rarity: 'epic'
   },
   {
     id: '4',
     icon: <Trophy size={24} />,
-    unlocked: false,
+    rarity: 'legendary'
+  },
+  {
+    id: '5',
+    icon: <Medal size={24} />,
+    rarity: 'common'
+  },
+  {
+    id: '6',
+    icon: <Medal size={24} />,
+    rarity: 'rare'
+  },
+  {
+    id: '7',
+    icon: <Trophy size={24} />,
     rarity: 'legendary'
   }
 ];
@@ -61,6 +78,21 @@ export default function Achievements() {
   const lang = player.language || 'pt';
   const t = translations[lang];
   const at = achievementTranslations[lang];
+
+  const totalSkinsInStore = 11; // 🧑 + 👩 (padrões) + 9 na loja (🏈, 👻, 🧟, 🦸, 🧛, 🧜‍♀️, 🦄, 🐉, 🌌)
+
+  const isUnlocked = (id: string) => {
+    switch (id) {
+      case '1': return player.xp > 0 || player.level > 1; // Simplificado: se tem xp ou passou do nível 1, completou um labirinto
+      case '2': return false; // Necessário salvar tempos de recorde no player data para checar (não implementado no player data padrão)
+      case '3': return (player.missionProgress['3'] || 0) >= 10; // Usando progresso de missões como proxy
+      case '4': return player.level >= 10;
+      case '5': return player.unlockedSkins.length >= 1;
+      case '6': return player.unlockedSkins.length >= 3;
+      case '7': return player.unlockedSkins.length >= totalSkinsInStore;
+      default: return false;
+    }
+  };
 
   const getRarityColor = (rarity: string) => {
     switch (rarity) {
@@ -82,10 +114,11 @@ export default function Achievements() {
         <div className="w-8" />
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4">
-        <div className="grid grid-cols-2 gap-4">
+      <div className="flex-1 overflow-y-auto p-4 scrollbar-hide">
+        <div className="grid grid-cols-2 gap-4 pb-20">
           {ACHIEVEMENTS_BASE.map((ach, index) => {
             const translation = at[ach.id as keyof typeof at];
+            const unlocked = isUnlocked(ach.id);
             return (
               <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
@@ -93,16 +126,16 @@ export default function Achievements() {
                 transition={{ delay: index * 0.05 }}
                 key={ach.id}
                 className={`p-5 rounded-[2rem] border flex flex-col items-center text-center gap-3 transition-all ${
-                  ach.unlocked 
+                  unlocked 
                   ? 'bg-[#1B263B] border-[#2A4A6B]/50' 
                   : 'bg-[#1B263B]/30 border-transparent opacity-40 grayscale'
                 }`}
               >
                 <div 
                   className={`w-16 h-16 rounded-3xl flex items-center justify-center shadow-2xl ${
-                      ach.unlocked ? 'bg-[#0D1B2A]' : 'bg-[#0D1B2A]/50'
+                      unlocked ? 'bg-[#0D1B2A]' : 'bg-[#0D1B2A]/50'
                   }`}
-                  style={{ color: ach.unlocked ? getRarityColor(ach.rarity) : '#415A77' }}
+                  style={{ color: unlocked ? getRarityColor(ach.rarity) : '#415A77' }}
                 >
                   {ach.icon}
                 </div>
@@ -111,7 +144,7 @@ export default function Achievements() {
                   <p className="text-[9px] text-[#415A77] font-medium leading-tight">{translation.desc}</p>
                 </div>
                 
-                {ach.unlocked && (
+                {unlocked && (
                     <div className="px-2 py-0.5 rounded-full bg-[#00C896]/10 text-[#00C896] text-[8px] font-black uppercase tracking-tighter">
                         {t.unlocked}
                     </div>

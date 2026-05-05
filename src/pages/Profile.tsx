@@ -141,7 +141,7 @@ export default function Profile() {
               </h3>
             </div>
             <div className="grid grid-cols-5 gap-3">
-              {player.unlockedAvatars.slice(0, 1).map(av => (
+              {player.unlockedAvatars.map(av => (
                 <button
                   key={av}
                   onClick={() => changeAvatar(av)}

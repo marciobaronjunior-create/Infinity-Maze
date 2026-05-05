@@ -59,7 +59,8 @@ export const translations = {
       sereia: 'Sereia',
       unicornio: 'Unicórnio',
       dragao: 'Dragão Imperial',
-      cosmos: 'Cosmos'
+      cosmos: 'Cosmos',
+      menina: 'Exploradora'
     },
     deleteAccount: 'Excluir Conta Permanentemente',
     deleteModal: {
@@ -173,7 +174,8 @@ export const translations = {
       sereia: 'Mermaid',
       unicornio: 'Unicorn',
       dragao: 'Imperial Dragon',
-      cosmos: 'Cosmos'
+      cosmos: 'Cosmos',
+      menina: 'Explorer Girl'
     },
     deleteAccount: 'Delete Account Permanently',
     deleteModal: {
@@ -255,9 +257,9 @@ export function getPlayerData(): PlayerData {
     level: 1,
     xp: 0,
     coins: 100,
-    unlockedAvatars: ['🧑'],
+    unlockedAvatars: ['🧑', '👩'],
     mazeSkin: '🧑',
-    unlockedSkins: ['🧑'],
+    unlockedSkins: ['🧑', '👩'],
     nicknameChanged: false,
     redeemedMissions: [],
     missionProgress: {
@@ -283,23 +285,20 @@ export function getPlayerData(): PlayerData {
       // Merge stored data with defaults to ensure new fields are present
       const merged = { ...defaultData, ...parsed };
       
-      // Migration for unlockedAvatars - keep it simple
-      if (!merged.unlockedAvatars || merged.unlockedAvatars.length === 0) {
-        merged.unlockedAvatars = ['🧑'];
-      }
+      // Forçar apenas os dois avatares permitidos
+      merged.unlockedAvatars = ['🧑', '👩'];
       
-      // Filter out removed avatars if they were from defaults
-      const defaultsToRemove = ['🤖', '🐱', '🦊', '🦁', '🦉', '🐲'];
-      merged.unlockedAvatars = merged.unlockedAvatars.filter(av => !defaultsToRemove.includes(av) || av === merged.avatar);
-      
-      if (merged.avatar === '🥷') {
-        merged.avatar = defaultData.avatar;
+      if (merged.avatar !== '🧑' && merged.avatar !== '👩') {
+        merged.avatar = '🧑';
       }
 
-      // Ensure mazeSkin and unlockedSkins exist if they were missing (new update)
+      // Ensure mazeSkin and unlockedSkins exist
       if (!merged.mazeSkin) merged.mazeSkin = merged.avatar;
       if (!merged.unlockedSkins || merged.unlockedSkins.length === 0) {
-        merged.unlockedSkins = [merged.mazeSkin];
+        merged.unlockedSkins = ['🧑', '👩'];
+      } else {
+        if (!merged.unlockedSkins.includes('🧑')) merged.unlockedSkins.push('🧑');
+        if (!merged.unlockedSkins.includes('👩')) merged.unlockedSkins.push('👩');
       }
       
       return merged;
