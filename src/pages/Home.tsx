@@ -192,13 +192,17 @@ export default function Home() {
            className="relative"
         >
           <div className="absolute -inset-8 bg-[#00C896] blur-[60px] opacity-10 rounded-full" />
-          <div className="w-20 h-20 bg-[#1B263B] rounded-3xl flex items-center justify-center mx-auto mb-6 border border-[#2A4A6B] shadow-2xl">
-            <div className="grid grid-cols-2 gap-1">
-              <div className="w-3 h-3 bg-[#00C896] rounded-sm" />
-              <div className="w-3 h-3 bg-transparent border border-[#00C896] rounded-sm" />
-              <div className="w-3 h-3 bg-transparent border border-[#00C896] rounded-sm" />
-              <div className="w-3 h-3 bg-[#00C896] rounded-sm" />
-            </div>
+          <div className="w-32 h-32 bg-[#1B263B] rounded-[2.5rem] flex items-center justify-center mx-auto mb-6 border-2 border-[#2A4A6B] shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden">
+            <img 
+              src="/app_icon.png" 
+              alt="Maze Logo" 
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                // Fallback caso a imagem ainda não tenha sido processada
+                (e.target as any).style.display = 'none';
+                (e.target as any).parentElement.innerHTML = '<div class="grid grid-cols-2 gap-1"><div class="w-3 h-3 bg-[#00C896] rounded-sm"></div><div class="w-3 h-3 border border-[#00C896] rounded-sm"></div><div class="w-3 h-3 border border-[#00C896] rounded-sm"></div><div class="w-3 h-3 bg-[#00C896] rounded-sm"></div></div>';
+              }}
+            />
           </div>
           <h1 className="text-5xl font-black tracking-tighter flex flex-col items-center leading-[0.9]" style={{ color: '#E0E1DD' }}>
             <span>{player.language === 'en' ? 'INFINITY' : 'LABIRINTO'}</span>

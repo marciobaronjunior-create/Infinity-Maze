@@ -9,10 +9,10 @@
   "description": "Jogo de Labirinto Profissional",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/3593/3593452.png",
+      "src": "/app_icon.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }
