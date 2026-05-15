@@ -1,5 +1,6 @@
 {
   "name": "react-example",
+  "id": "com.infinity.maze",
   "private": true,
   "version": "0.0.0",
   "type": "module",

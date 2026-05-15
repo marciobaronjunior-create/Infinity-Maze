@@ -1,6 +1,7 @@
 {
   "name": "Infinity Maze",
   "description": "Labirinto Infinito: Desafie sua mente com labirintos gerados processualmente e skins exclusivas.",
+  "id": "com.infinity.maze",
   "requestFramePermissions": [],
   "majorCapabilities": []
 }
